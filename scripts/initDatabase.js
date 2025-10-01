@@ -1,14 +1,13 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
-const { initSchema, getDb } = require('../database/db');
+const { initSchema } = require('../database/db');
 
 const initializeDatabase = async () => {
   console.log('Initializing database with sample data...');
 
   try {
     // Initialize schema first
-    await initSchema();
-    const db = getDb();
+    const db = await initSchema();
     
     // Create admin user
     const hashedPassword = await bcrypt.hash('admin123', 10);

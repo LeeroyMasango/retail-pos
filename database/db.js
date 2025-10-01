@@ -228,5 +228,18 @@ const initSchema = async () => {
   return dbProxy;
 };
 
-// Export initialization function and proxy
-module.exports = { initSchema, getDb: () => dbProxy };
+// Initialize on require (for compatibility with existing routes)
+let initialized = false;
+const ensureInitialized = async () => {
+  if (!initialized) {
+    await initSchema();
+    initialized = true;
+  }
+  return dbProxy;
+};
+
+// For backward compatibility, export dbProxy directly
+// Routes will use this synchronously after server initialization
+module.exports = dbProxy;
+module.exports.initSchema = initSchema;
+module.exports.ensureInitialized = ensureInitialized;

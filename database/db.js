@@ -15,6 +15,8 @@ let SQL = null;
 
 // Initialize sql.js
 const initDb = async () => {
+  if (db) return db; // Return existing instance
+  
   SQL = await initSqlJs();
   
   // Load existing database or create new one
@@ -31,48 +33,74 @@ const initDb = async () => {
 // Save database to file
 const saveDb = () => {
   if (db) {
-    const data = db.export();
-    const buffer = Buffer.from(data);
-    fs.writeFileSync(dbPath, buffer);
+    try {
+      const data = db.export();
+      const buffer = Buffer.from(data);
+      fs.writeFileSync(dbPath, buffer);
+    } catch (error) {
+      console.error('Error saving database:', error);
+    }
   }
 };
 
 // Wrapper for exec
 const execWrapper = (sql) => {
+  if (!db) throw new Error('Database not initialized');
   db.exec(sql);
   saveDb();
 };
 
-// Wrapper for prepare
+// Wrapper for prepare with better error handling
 const prepareWrapper = (sql) => {
   return {
     run: (...params) => {
-      db.run(sql, params);
-      const lastIdResult = db.exec("SELECT last_insert_rowid()");
-      const lastId = lastIdResult[0]?.values[0]?.[0];
-      saveDb();
-      console.log('Last insert ID:', lastId);
-      return { lastInsertRowid: lastId };
+      if (!db) throw new Error('Database not initialized');
+      try {
+        const stmt = db.prepare(sql);
+        stmt.bind(params);
+        stmt.step();
+        stmt.free();
+        
+        const lastIdStmt = db.prepare("SELECT last_insert_rowid() as id");
+        lastIdStmt.step();
+        const lastId = lastIdStmt.getAsObject().id;
+        lastIdStmt.free();
+        
+        saveDb();
+        return { lastInsertRowid: lastId, changes: 1 };
+      } catch (error) {
+        console.error('Error in run:', error);
+        throw error;
+      }
     },
     get: (...params) => {
-      const result = db.exec(sql, params);
-      if (result.length === 0) return undefined;
-      const columns = result[0].columns;
-      const values = result[0].values[0];
-      if (!values) return undefined;
-      const row = {};
-      columns.forEach((col, i) => row[col] = values[i]);
-      return row;
+      if (!db) throw new Error('Database not initialized');
+      try {
+        const stmt = db.prepare(sql);
+        stmt.bind(params);
+        const result = stmt.step() ? stmt.getAsObject() : undefined;
+        stmt.free();
+        return result;
+      } catch (error) {
+        console.error('Error in get:', error);
+        throw error;
+      }
     },
     all: (...params) => {
-      const result = db.exec(sql, params);
-      if (result.length === 0) return [];
-      const columns = result[0].columns;
-      return result[0].values.map(values => {
-        const row = {};
-        columns.forEach((col, i) => row[col] = values[i]);
-        return row;
-      });
+      if (!db) throw new Error('Database not initialized');
+      try {
+        const stmt = db.prepare(sql);
+        stmt.bind(params);
+        const results = [];
+        while (stmt.step()) {
+          results.push(stmt.getAsObject());
+        }
+        stmt.free();
+        return results;
+      } catch (error) {
+        console.error('Error in all:', error);
+        throw error;
+      }
     }
   };
 };

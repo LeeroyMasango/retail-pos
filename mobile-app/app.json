@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Retail POS",
+    "slug": "retail-pos",
+    "owner": "leeroym",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#6200ee"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.retailpos.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.retailpos.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera for barcode scanning."
+        }
+      ]
+    ],
+    "web": {
+      "name": "Retail POS",
+      "shortName": "POS",
+      "description": "Point of Sale System for Retail Management",
+      "themeColor": "#6200ee",
+      "backgroundColor": "#ffffff"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+========================================
+STEP-BY-STEP: BUILD STANDALONE iOS APP
+========================================
+
+STEP 1: Open PowerShell
+------------------------
+Press Windows Key + X
+Select "Windows PowerShell" or "Terminal"
+
+
+STEP 2: Navigate to Project
+----------------------------
+Copy and paste this command:
+
+cd C:\Users\gh\CascadeProjects\retail-pos\mobile-app
+
+
+STEP 3: Login to Expo
+----------------------
+Copy and paste this command:
+
+eas login
+
+You'll be asked for:
+- Email or username: [Enter your Expo account email]
+- Password: [Enter your Expo password]
+
+Don't have an account? Go to https://expo.dev/signup first!
+
+
+STEP 4: Verify Login
+---------------------
+Copy and paste this command:
+
+eas whoami
+
+You should see your username. If not, repeat Step 3.
+
+
+STEP 5: Build the App
+----------------------
+Copy and paste this command:
+
+eas build --profile preview --platform ios
+
+You'll be asked:
+1. Apple ID: [Enter your iCloud email - the one you use on your iPhone]
+2. Password: [Your Apple ID password]
+3. Two-factor code: [Check your iPhone for the 6-digit code]
+4. Generate certificates? → Press Y
+
+
+STEP 6: Wait for Build
+-----------------------
+- Build takes 15-30 minutes
+- You'll see progress in the terminal
+- Don't close the window!
+
+
+STEP 7: Install on iPhone
+--------------------------
+When build completes:
+
+1. You'll see a link like: https://expo.dev/artifacts/eas/...
+2. Open that link on your iPhone (Safari)
+3. Tap "Install" or "Download"
+4. Go to Settings → General → VPN & Device Management
+5. Tap your Apple ID under "Developer App"
+6. Tap "Trust"
+7. Go to home screen and open Retail POS!
+
+
+========================================
+TROUBLESHOOTING
+========================================
+
+"Not logged in"
+→ Run: eas login
+
+"Apple ID authentication failed"
+→ Make sure 2FA is enabled on your Apple ID
+→ Use your main iCloud email
+
+"Build failed"
+→ Check logs at: https://expo.dev
+→ Try: eas build --profile preview --platform ios --clear-cache
+
+"Can't install on iPhone"
+→ Make sure using same Apple ID
+→ Trust certificate in Settings
+
+
+========================================
+NEED HELP?
+========================================
+
+Check build status: https://expo.dev
+Expo documentation: https://docs.expo.dev/build/setup/
+
+========================================
